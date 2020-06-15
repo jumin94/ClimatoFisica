@@ -33,7 +33,7 @@ for file in list:
     tas_mod.append(tas)
 
 #Guardo las temperaturas en temp_obs
-temp_obs =  xr.open_dataset(path+'tmp_cru_ts3.20_197601-200512_2.5_anu.nc')
+temp_obs =  xr.open_dataset(path+'DATOS/tmp_cru_ts3.20_197601-200512_2.5_anu.nc')
 climatologia = temp_obs.mean(dim='time')
 
 sd = []
@@ -42,12 +42,18 @@ for run in tas_mod:
     clima, std = anomaly(run.tas,temp_obs.tmp)
     sd.append(std)
 
+tas_mod_ensamble = (tas_mod[0].tas + tas_mod[1].tas + tas_mod[2].tas + tas_mod[3].tas + tas_mod[4].tas )/5
+tas_mod_ens = tas_mod_ensamble.mean(dim='time')
+
+
+clima, std_ens = anomaly(tas_mod_ens,temp_obs.tmp)
+
 lat = tas_mod[0].lat
 lon = tas_mod[0].lon
 
 def mapa(dato,titulo):
     lat = temp_obs.lat
-    cyclic_data, cyclic_lon = add_cyclic_point(dato,coord=lon)
+    lon = temp_obs.lon
     #SoutherHemisphere Stereographic
     fig = plt.figure(figsize=(20, 14),dpi=300,constrained_layout=True)
     fig.suptitle(str(titulo), y=0.9, x=0.5,fontsize=25)
@@ -56,8 +62,8 @@ def mapa(dato,titulo):
     projection = ccrs.PlateCarree()
     ax1 = plt.subplot(projection=projection)
     ax1.set_extent([-180,180, -90, 90], crs=data_crs)
-    clevels = np.arange(np.min(dato),np.max(dato),(np.max(dato)-np.min(dato))/11)
-    im1=ax1.contourf(cyclic_lon, lat, cyclic_data,clevels,transform=data_crs,cmap='OrRd',extend='both')
+    clevels = np.arange(-10,12,1)
+    im1=ax1.contourf(lon, lat, dato,clevels,transform=data_crs,cmap='RdBu',extend='both')
     #ax1.add_feature(cartopy.feature.LAND, zorder=100, edgecolor='k')
     ax1.add_feature(cartopy.feature.COASTLINE)
     ax1.add_feature(cartopy.feature.BORDERS, linestyle='-', alpha=.5)
@@ -77,13 +83,13 @@ def mapa(dato,titulo):
     cbar.set_label('Temperatura [$\circ$C]',fontsize=20)
     return fig
 
-titulo = 'climatologia'
+titulo = 'bias en tas'
 lon = np.linspace(0,360,144)
-mapa(climatologia.tmp,titulo)
-plt.savefig(path+'climatologia_obs_t.png',bbox_inches='tight')
+mapa(climatologia.tmp-tas_mod_ens+273,titulo)
+plt.savefig(path+'climatologia_bias_CanESM2_t.png',bbox_inches='tight')
 plt.clf
-titulo = 'standard deviation ens#5'
-mapa(sd[4],titulo)
-plt.savefig(path+'desviacion_standard_ens5',bbox_inches='tight')
+titulo = 'standard deviation ensamble CanESM2'
+mapa(std_ens,titulo)
+plt.savefig(path+'desviacion_standard_ensamble_CanESM2_ta.png',bbox_inches='tight')
 plt.clf
 

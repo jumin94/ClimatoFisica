@@ -31,8 +31,8 @@ for file in list:
     tas = xr.open_dataset(path+file)
     tas_mod.append(tas)
 
-#Guardo las temperaturas en temp_obs
-precip_obs =  xr.open_dataset(path+'precip.mon.total.v7_197601-200512_2.5_anu.nc')
+#Guardo las temperaturas en precip_obs
+precip_obs =  xr.open_dataset(path+'DATOS/precip.mon.total.v7_197601-200512_2.5_anu.nc')
 climatologia = precip_obs.mean(dim='time')
 
 sd = []
@@ -41,12 +41,15 @@ for run in tas_mod:
     clima, std = anomaly(run.pr,precip_obs.precip)
     sd.append(std)
 
+tas_mod_ensamble = (tas_mod[0].pr + tas_mod[1].pr + tas_mod[2].pr + tas_mod[3].pr + tas_mod[4].pr )/5
+tas_mod_ens = tas_mod_ensamble.mean(dim='time')
+
 lat = tas_mod[0].lat
 lon = tas_mod[0].lon
 
 def mapa(dato,titulo):
     lat = precip_obs.lat
-    cyclic_data, cyclic_lon = add_cyclic_point(dato,coord=lon)
+    #cyclic_data, cyclic_lon = add_cyclic_point(dato,coord=lon)
     #SoutherHemisphere Stereographic
     fig = plt.figure(figsize=(20, 14),dpi=300,constrained_layout=True)
     fig.suptitle(str(titulo), y=0.9, x=0.5,fontsize=25)
@@ -55,8 +58,8 @@ def mapa(dato,titulo):
     projection = ccrs.PlateCarree()
     ax1 = plt.subplot(projection=projection)
     ax1.set_extent([-180,180, -90, 90], crs=data_crs)
-    clevels = np.arange(np.min(dato),np.max(dato),(np.max(dato)-np.min(dato))/11)
-    im1=ax1.contourf(cyclic_lon, lat, cyclic_data,clevels,transform=data_crs,cmap='YlGn',extend='both')
+    clevels = np.arange(-2000,2000,50)
+    im1=ax1.contourf(lon, lat, dato,clevels,transform=data_crs,cmap='RdBu',extend='both')
     #ax1.add_feature(cartopy.feature.LAND, zorder=100, edgecolor='k')
     ax1.add_feature(cartopy.feature.COASTLINE)
     ax1.add_feature(cartopy.feature.BORDERS, linestyle='-', alpha=.5)
@@ -76,10 +79,10 @@ def mapa(dato,titulo):
     cbar.set_label('Precipitación [mm/año]',fontsize=20)
     return fig
 
-titulo = 'climatologia'
+titulo = 'bias campo medio CanESM2'
 lon = np.linspace(0,360,144)
-mapa(climatologia.precip,titulo)
-plt.savefig(path+'climatologia_obs_pr.png',bbox_inches='tight')
+mapa(climatologia.precip-tas_mod_ens,titulo)
+plt.savefig(path+'climatologia_pr_CanESM2_bias.png',bbox_inches='tight')
 plt.clf
 titulo = 'standard deviation ens mean'
 mapa((sd[0]+sd[1]+sd[2]+sd[3]+sd[4])/5,titulo)

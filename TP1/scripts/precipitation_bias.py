@@ -9,8 +9,6 @@ from datetime import datetime, timedelta
 import cartopy.crs as ccrs
 import cartopy.feature
 from cartopy.util import add_cyclic_point
-import matplotlib
-import matplotlib.pyplot as plt
 import matplotlib as mpl
 mpl.rcParams['hatch.linewidth'] = 0.5  # previous pdf hatch linewidth
 
@@ -35,7 +33,7 @@ list = glob.glob('canESM2/pr*historical*anu.nc')
 tas_mod = []
 #Guardo el ensamble en tas_mod
 for file in list:
-    tas = xr.open_dataset(path+file)
+    tas = xr.open_dataset('/home/tabu/Escritorio/Doctorado/ClimDinam/'+file)
     tas['time'] = time['time']
     tas_mod.append(tas)
 
