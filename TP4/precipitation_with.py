@@ -42,7 +42,7 @@ def bandas_lat(dato,indice):
     pr_bandas = np.append(pr_bandas,aux_weightHS.values)
     pr_bandas = (pr_bandas*areas)/31536000
     pr_bandas = pr_bandas/areas
-    pr_bandas_dic = {'90-80N':round(pr_bandas[0],1),'80-70N':round(pr_bandas[1],1),'70-60N':round(pr_bandas[2],1),'60-50N':round(pr_bandas[3],1),'50-40N':round(pr_bandas[4],1),'40-30N':round(pr_bandas[5],1),'30-20N':round(pr_bandas[6],1),'20-10N':round(pr_bandas[7],1),'10-0N':round(pr_bandas[8],1),'0-10S':round(pr_bandas[9],1),'20-10S':round(pr_bandas[10],1),'30-20S':round(pr_bandas[11],1),'40-30S':round(pr_bandas[12],1),'50-40S':round(pr_bandas[13],1),'60-50S':round(pr_bandas[14],1),'70-60S':round(pr_bandas[15],1),'80-70S':round(pr_bandas[16],1),'90-80S':round(pr_bandas[17],1),'90-0N':round(pr_bandas[18],1),'90-0S':round(pr_bandas[19],1)}
+    pr_bandas_dic = {'90-80S':round(pr_bandas[0],1),'80-70S':round(pr_bandas[1],1),'70-60S':round(pr_bandas[2],1),'60-50S':round(pr_bandas[3],1),'50-40S':round(pr_bandas[4],1),'40-30S':round(pr_bandas[5],1),'30-20S':round(pr_bandas[6],1),'20-10S':round(pr_bandas[7],1),'10-0S':round(pr_bandas[8],1),'0-10N':round(pr_bandas[9],1),'20-10N':round(pr_bandas[10],1),'30-20N':round(pr_bandas[11],1),'40-30N':round(pr_bandas[12],1),'50-40N':round(pr_bandas[13],1),'60-50N':round(pr_bandas[14],1),'70-60N':round(pr_bandas[15],1),'80-70N':round(pr_bandas[16],1),'90-80N':round(pr_bandas[17],1),'90-0S':round(pr_bandas[18],1),'90-0N':round(pr_bandas[19],1)}
     pr_bandas_dic = pd.DataFrame(pr_bandas_dic,index=[str(indice)])
     return pr_bandas_dic
 
@@ -67,24 +67,23 @@ def bandas_lat_pr(dato,indice):
         cont1 = cont1 + 2
         cont2 = cont2 + 2
         #print(cont2)
-    weights_HN = weights[0:37]
-    weights_HS = weights[36:73]
+    weights_HS = weights[0:37]
+    weights_HN = weights[36:73]
     aux = dato.pr*86400*365
     aux = aux.mean(dim='time')
-    auxHN = aux.isel(lat=slice(0,37)).mean(dim='lon')*weights_HN
-    auxHS = aux.isel(lat=slice(36,73)).mean(dim='lon')*weights_HS
-    area_HN = sum(weights_HN)
+    auxHS = aux.isel(lat=slice(0,37)).mean(dim='lon')*weights_HS
+    auxHN = aux.isel(lat=slice(36,73)).mean(dim='lon')*weights_HN
     area_HS = sum(weights_HS)
-    aux_weightHN = auxHN.sum(dim='lat')/area_HN
+    area_HN = sum(weights_HN)
     aux_weightHS = auxHS.sum(dim='lat')/area_HS
+    aux_weightHN = auxHN.sum(dim='lat')/area_HN
     pr_bandas = np.append(pr_bandas,aux_weightHN.values)
     pr_bandas = np.append(pr_bandas,aux_weightHS.values)
     pr_bandas = (pr_bandas*areas)/31536000
     pr_bandas = pr_bandas/areas
-    pr_bandas_dic = {'90-80N':round(pr_bandas[0],1),'80-70N':round(pr_bandas[1],1),'70-60N':round(pr_bandas[2],1),'60-50N':round(pr_bandas[3],1),'50-40N':round(pr_bandas[4],1),'40-30N':round(pr_bandas[5],1),'30-20N':round(pr_bandas[6],1),'20-10N':round(pr_bandas[7],1),'10-0N':round(pr_bandas[8],1),'0-10S':round(pr_bandas[9],1),'20-10S':round(pr_bandas[10],1),'30-20S':round(pr_bandas[11],1),'40-30S':round(pr_bandas[12],1),'50-40S':round(pr_bandas[13],1),'60-50S':round(pr_bandas[14],1),'70-60S':round(pr_bandas[15],1),'80-70S':round(pr_bandas[16],1),'90-80S':round(pr_bandas[17],1),'90-0N':round(pr_bandas[18],1),'90-0S':round(pr_bandas[19],1)}
+    pr_bandas_dic = {'90-80S':round(pr_bandas[0],1),'80-70S':round(pr_bandas[1],1),'70-60S':round(pr_bandas[2],1),'60-50S':round(pr_bandas[3],1),'50-40S':round(pr_bandas[4],1),'40-30S':round(pr_bandas[5],1),'30-20S':round(pr_bandas[6],1),'20-10S':round(pr_bandas[7],1),'10-0S':round(pr_bandas[8],1),'0-10N':round(pr_bandas[9],1),'20-10N':round(pr_bandas[10],1),'30-20N':round(pr_bandas[11],1),'40-30N':round(pr_bandas[12],1),'50-40N':round(pr_bandas[13],1),'60-50N':round(pr_bandas[14],1),'70-60N':round(pr_bandas[15],1),'80-70N':round(pr_bandas[16],1),'90-80N':round(pr_bandas[17],1),'90-0S':round(pr_bandas[18],1),'90-0N':round(pr_bandas[19],1)}
     pr_bandas_dic = pd.DataFrame(pr_bandas_dic,index=[str(indice)])
     return pr_bandas_dic
-
 
 #Dataframe con valores+-------------------------------------------------
 C = pd.DataFrame(columns=['90-80S','80-70S','70-60S','60-50S','50-40S','40-30S','30-20S','20-10S','10-0S','0-10N','20-10N','30-20N','40-30N','50-40N','60-50N','70-60N','80-70N','90-80N','90-0S','90-0N'])
